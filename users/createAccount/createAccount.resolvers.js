@@ -29,10 +29,10 @@ export default {
               password: hashPassword,
             },
           });
-          return user;
+          return { ok: true, user, error: null };
         }
       } catch (err) {
-        return err;
+        return { ok: false, error: err };
       }
     },
   },
