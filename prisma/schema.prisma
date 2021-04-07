@@ -19,8 +19,79 @@ model User {
   bio String?
   avatar String?
   password String
+  photos Photo[]
+  likes Like[]
+  comments Comment[]
   followers User[] @relation("FollowersRelation", references: [id])
   following User[] @relation("FollowersRelation", references: [id])
+  room Room[]
+  messages Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Photo {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  hashtags Hashtag[]
+  userId Int
+  file String
+  caption String?
+  likes Like[]
+  comments Comment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Hashtag {
+  id Int @id @default(autoincrement())
+  hashtag String @unique
+  photos Photo[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Like {
+  id Int @id @default(autoincrement())
+  photo Photo @relation(fields: [photoId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  photoId Int
+  userId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([photoId, userId])
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  photo Photo @relation(fields: [photoId], references: [id])
+  content String
+  photoId Int
+  userId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Room {
+  id Int @id @default(autoincrement())
+  users User[]
+  messages Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Message {
+  id Int @id @default(autoincrement())
+  content String
+  user User @relation(fields: [userId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
+  roomId Int
+  userId Int
+  hasBeenRead Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
