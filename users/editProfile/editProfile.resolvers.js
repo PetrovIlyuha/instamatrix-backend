@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { authGuard } from '../users.utils';
 import { createWriteStream } from 'fs';
 import path from 'path';
+import { uploadImage } from '../../shared/Shared.utils';
 
 const editProfileFn = async (
   _,
@@ -12,13 +13,14 @@ const editProfileFn = async (
   try {
     let avatarUrl = null;
     if (avatar) {
-      const { filename, createReadStream } = await avatar;
-      const savedFileName = `${loggedInUser.id}-${filename}`;
-      const uploadPath = path.join(process.cwd(), 'uploads', savedFileName);
-      const incomingImageStream = createReadStream();
-      const saveImageStream = createWriteStream(uploadPath);
-      incomingImageStream.pipe(saveImageStream);
-      avatarUrl = `http://localhost:4000/static/${savedFileName}`;
+      avatarUrl = await uploadImage(avatar, loggedInUser.id, 'avatars');
+      // const { filename, createReadStream } = await avatar;
+      // const savedFileName = `${loggedInUser.id}-${filename}`;
+      // const uploadPath = path.join(process.cwd(), 'uploads', savedFileName);
+      // const incomingImageStream = createReadStream();
+      // const saveImageStream = createWriteStream(uploadPath);
+      // incomingImageStream.pipe(saveImageStream);
+      // avatarUrl = `http://localhost:4000/static/${savedFileName}`;
     }
     let hashedPassword = null;
     if (password) {
