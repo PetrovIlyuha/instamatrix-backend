@@ -21,10 +21,15 @@ export async function getUser(token) {
 
 export const authGuard = resolver => (root, args, context, info) => {
   if (!context.loggedInUser) {
-    return {
-      ok: false,
-      error: 'You are not logged in!',
-    };
+    const isQuery = info.operation.operation === 'query';
+    if (isQuery) {
+      return null;
+    } else {
+      return {
+        ok: false,
+        error: 'You are not logged in!',
+      };
+    }
   }
   return resolver(root, args, context, info);
 };
